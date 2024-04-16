@@ -1,22 +1,41 @@
 import streamlit as st
-import pandas as pd
-import matplotlib.pyplot as plt
+import numpy as np
+import cv2
+from PIL import Image
 
-# Load the dataset
-df = pd.read_csv('WomensClothingE-CommerceReviews - WomensClothingE-CommerceReviews.csv')
+def main():
+    st.title("Image Processing")
 
-# Create a histogram of ratings
-st.title('Distribution of Ratings')
-rating_counts = df['Rating'].value_counts()
-fig, ax = plt.subplots()
-ax.bar(rating_counts.index, rating_counts.values)
-plt.xlabel('Rating')
-plt.ylabel('Count')
-st.pyplot(fig)
+    uploaded_image = st.file_uploader("Upload an image", type=["jpg", "jpeg", "png"])
 
-# Calculate positive feedback count for each class name
-positive_feedback_summary = df.groupby('Class Name')['Positive Feedback Count'].sum()
+    if uploaded_image is not None:
+        image = Image.open(uploaded_image)
+        st.image(image, caption="Uploaded Image", use_column_width=True)
 
-# Display the summary
-st.title('Positive Feedback Count Summary')
-st.bar_chart(positive_feedback_summary)
+        img_np = np.array(image)
+
+        st.header("Image Operations")
+
+        if st.button("Grayscale"):
+            grayscale_img = cv2.cvtColor(img_np, cv2.COLOR_BGR2GRAY)
+            st.image(grayscale_img, caption="Grayscale Image", use_column_width=True)
+
+        if st.button("Resize"):            
+            img_resize=image.resize((200,200),Image.HAMMING)
+            st.image(img_resize, caption="Resized Image", use_column_width=True)
+
+        if st.button("Cropping"):
+            top_left_x = 0
+            top_left_y = 0
+            width = 100
+            height = 100
+            Image_Cropped=img_np[top_left_y:top_left_y+height,top_left_x:top_left_x+width]
+            st.image(Image_Cropped, caption="Cropped Image", use_column_width=True)
+        
+        if st.button("Image Rotation"):
+            rotated_image=image.rotate(45)
+            st.image(rotated_image, caption="Rotated Image", use_column_width=True)
+
+if __name__ == "__main__":
+    main()
+
