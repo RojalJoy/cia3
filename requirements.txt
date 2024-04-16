@@ -7,3 +7,6 @@ matplotlib
 nltk
 cv2
 PIL
+collections
+sklearn
+sklearn
