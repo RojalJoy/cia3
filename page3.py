@@ -1,33 +1,67 @@
 import streamlit as st
 import pandas as pd
-import matplotlib.pyplot as plt
-import seaborn as sns
+import nltk
+from nltk.corpus import stopwords
+from nltk.tokenize import word_tokenize
+from nltk.stem import PorterStemmer, WordNetLemmatizer
+from sklearn.feature_extraction.text import TfidfVectorizer
+from sklearn.metrics.pairwise import cosine_similarity, pairwise_distances
+from collections import defaultdict
 
-# Load the dataset
-@st.cache
-def load_data():
-    return pd.read_csv('WomensClothingE-CommerceReviews - WomensClothingE-CommerceReviews.csv')
+# NLTK resources
+nltk.download('punkt')
+nltk.download('stopwords')
+nltk.download('wordnet')
 
-df = load_data()
+def text_processing(text):
+    if isinstance(text, str): 
+        # Token
+        tokens = word_tokenize(text.lower())
+        # stopwords, punctuation, and special characters
+        stop_words = set(stopwords.words('english'))
+        tokens = [token for token in tokens if token.isalnum() and token not in stop_words]
+        # Lemmatization
+        lemmatizer = WordNetLemmatizer()
+        lemmatized_tokens = [lemmatizer.lemmatize(token) for token in tokens]
+        # Join
+        preprocessed_text = ' '.join(lemmatized_tokens)
+        return preprocessed_text
+    else:
+        return ''  
 
-# Sidebar for graph type and attribute selection
-st.sidebar.title('Select Options')
-graph_type = st.sidebar.selectbox('Select Graph Type', ['Scatter Plot', 'Line Plot', 'Bar Plot'])
-x_attribute = st.sidebar.selectbox('Select X Attribute', df.columns)
-y_attribute = st.sidebar.selectbox('Select Y Attribute', df.columns)
+def main():
+    st.title("Text Analysis")
+    df = pd.read_csv('WomensClothingE-CommerceReviews - WomensClothingE-CommerceReviews.csv')
 
-# Main content
-st.title('2D Graph Generator')
+    # text_processing
+    df['Cleaned Text'] = df['Review Text'].apply(text_processing)
 
-# Plot the selected graph
-fig, ax = plt.subplots()
-if graph_type == 'Scatter Plot':
-    sns.scatterplot(data=df, x=x_attribute, y=y_attribute, ax=ax)
-elif graph_type == 'Line Plot':
-    sns.lineplot(data=df, x=x_attribute, y=y_attribute, ax=ax)
-elif graph_type == 'Bar Plot':
-    sns.barplot(data=df, x=x_attribute, y=y_attribute, ax=ax)
+    # division names
+    divisions = ['General', 'General Petite', 'Initmates']
+    selected_division = st.selectbox("Select Division Name", divisions)
+    
+    # Filter dataset 
+    filtered_df = df[df['Division Name'] == "Initmates"]
 
-plt.xlabel(x_attribute)
-plt.ylabel(y_attribute)
-st.pyplot(fig)
+    # Calculate TF-IDF vectors
+    tfidf_vectorizer = TfidfVectorizer()
+    tfidf_matrix = tfidf_vectorizer.fit_transform(filtered_df['Cleaned Text'])
+
+    # Calculate cosine similarity 
+    similarity_matrix = cosine_similarity(tfidf_matrix)  # or pairwise_distances(tfidf_matrix, metric='jaccard')
+
+    # Display
+    st.header("Similar Reviews for Initimates")
+    similarity_dict = defaultdict(list)
+    for i in range(len(similarity_matrix)):
+        for j in range(i+1, len(similarity_matrix)):
+            similarity_dict[similarity_matrix[i, j]].append((i, j))
+    
+    similar_reviews = similarity_dict[max(similarity_dict.keys())]
+    for pair in similar_reviews:
+        st.write(filtered_df.iloc[pair[0]]['Review Text'])
+        st.write(filtered_df.iloc[pair[1]]['Review Text'])
+        st.write("---")
+
+if __name__ == "__main__":
+    main()
