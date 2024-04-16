@@ -36,9 +36,7 @@ def main():
     # text_processing
     df['Cleaned Text'] = df['Review Text'].apply(text_processing)
 
-    # division names
-    divisions = ['General', 'General Petite', 'Initmates']
-    selected_division = st.selectbox("Select Division Name", divisions)
+
     
     # Filter dataset 
     filtered_df = df[df['Division Name'] == "Initmates"]
@@ -52,6 +50,52 @@ def main():
 
     # Display
     st.header("Similar Reviews for Initimates")
+    similarity_dict = defaultdict(list)
+    for i in range(len(similarity_matrix)):
+        for j in range(i+1, len(similarity_matrix)):
+            similarity_dict[similarity_matrix[i, j]].append((i, j))
+    
+    similar_reviews = similarity_dict[max(similarity_dict.keys())]
+    for pair in similar_reviews:
+        st.write(filtered_df.iloc[pair[0]]['Review Text'])
+        st.write(filtered_df.iloc[pair[1]]['Review Text'])
+        st.write("---")
+        
+      # Filter dataset 
+    filtered_df = df[df['Division Name'] == "General Petite"]
+
+    # Calculate TF-IDF vectors
+    tfidf_vectorizer = TfidfVectorizer()
+    tfidf_matrix = tfidf_vectorizer.fit_transform(filtered_df['Cleaned Text'])
+
+    # Calculate cosine similarity 
+    similarity_matrix = cosine_similarity(tfidf_matrix)  # or pairwise_distances(tfidf_matrix, metric='jaccard')
+
+    # Display
+    st.header("Similar Reviews for General Petite")
+    similarity_dict = defaultdict(list)
+    for i in range(len(similarity_matrix)):
+        for j in range(i+1, len(similarity_matrix)):
+            similarity_dict[similarity_matrix[i, j]].append((i, j))
+    
+    similar_reviews = similarity_dict[max(similarity_dict.keys())]
+    for pair in similar_reviews:
+        st.write(filtered_df.iloc[pair[0]]['Review Text'])
+        st.write(filtered_df.iloc[pair[1]]['Review Text'])
+        st.write("---")
+        
+      # Filter dataset 
+    filtered_df = df[df['Division Name'] == "General"]
+
+    # Calculate TF-IDF vectors
+    tfidf_vectorizer = TfidfVectorizer()
+    tfidf_matrix = tfidf_vectorizer.fit_transform(filtered_df['Cleaned Text'])
+
+    # Calculate cosine similarity 
+    similarity_matrix = cosine_similarity(tfidf_matrix)  # or pairwise_distances(tfidf_matrix, metric='jaccard')
+
+    # Display
+    st.header("Similar Reviews for General")
     similarity_dict = defaultdict(list)
     for i in range(len(similarity_matrix)):
         for j in range(i+1, len(similarity_matrix)):
