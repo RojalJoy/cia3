@@ -46,7 +46,7 @@ def main():
     tfidf_matrix = tfidf_vectorizer.fit_transform(filtered_df['Cleaned Text'])
 
     # Calculate cosine similarity 
-    similarity_matrix = cosine_similarity(tfidf_matrix)  # or pairwise_distances(tfidf_matrix, metric='jaccard')
+    similarity_matrix = cosine_similarity(tfidf_matrix)  
 
     # Display
     st.header("Similar Reviews for Initimates")
@@ -69,7 +69,7 @@ def main():
     tfidf_matrix = tfidf_vectorizer.fit_transform(filtered_df['Cleaned Text'])
 
     # Calculate cosine similarity 
-    similarity_matrix = cosine_similarity(tfidf_matrix)  # or pairwise_distances(tfidf_matrix, metric='jaccard')
+    similarity_matrix = cosine_similarity(tfidf_matrix) 
 
     # Display
     st.header("Similar Reviews for General Petite")
@@ -92,8 +92,7 @@ def main():
     tfidf_matrix = tfidf_vectorizer.fit_transform(filtered_df['Cleaned Text'])
 
     # Calculate cosine similarity 
-    similarity_matrix = cosine_similarity(tfidf_matrix)  # or pairwise_distances(tfidf_matrix, metric='jaccard')
-
+    similarity_matrix = cosine_similarity(tfidf_matrix) 
     # Display
     st.header("Similar Reviews for General")
     similarity_dict = defaultdict(list)
