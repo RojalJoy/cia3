@@ -57,8 +57,8 @@ def main():
     
     similar_reviews = similarity_dict[max(similarity_dict.keys())]
     for pair in similar_reviews:
-        st.write(filtered_df.iloc[pair[0]]['Review Text'])
-        st.write(filtered_df.iloc[pair[1]]['Review Text'])
+        st.write(filtered_df.iloc[pair[0]]['Cleaned Text'])
+        st.write(filtered_df.iloc[pair[1]]['Cleaned Text'])
         st.write("---")
         
       # Filter dataset 
@@ -80,8 +80,8 @@ def main():
     
     similar_reviews = similarity_dict[max(similarity_dict.keys())]
     for pair in similar_reviews:
-        st.write(filtered_df.iloc[pair[0]]['Review Text'])
-        st.write(filtered_df.iloc[pair[1]]['Review Text'])
+        st.write(filtered_df.iloc[pair[0]]['Cleaned Text'])
+        st.write(filtered_df.iloc[pair[1]]['Cleaned Text'])
         st.write("---")
         
       # Filter dataset 
@@ -102,8 +102,8 @@ def main():
     
     similar_reviews = similarity_dict[max(similarity_dict.keys())]
     for pair in similar_reviews:
-        st.write(filtered_df.iloc[pair[0]]['Review Text'])
-        st.write(filtered_df.iloc[pair[1]]['Review Text'])
+        st.write(filtered_df.iloc[pair[0]]['Cleaned Text'])
+        st.write(filtered_df.iloc[pair[1]]['Cleaned Text'])
         st.write("---")
 
 if __name__ == "__main__":
