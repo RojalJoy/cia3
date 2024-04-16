@@ -4,9 +4,10 @@ numpy
 plotly
 seaborn
 matplotlib
-nltk
 cv2
 PIL
 collections
 sklearn
 sklearn
+nltk
+
